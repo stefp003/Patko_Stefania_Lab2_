@@ -17,5 +17,6 @@ namespace Patko_Stefania_Lab2_.Data
         public DbSet<Patko_Stefania_Lab2_.Models.Book> Book { get; set; } = default!;
         public DbSet<Patko_Stefania_Lab2_.Models.Publisher> Publisher { get; set; } = default!;
         public DbSet<Patko_Stefania_Lab2_.Models.Author> Author { get; set; } = default!;
+        public DbSet<Patko_Stefania_Lab2_.Models.Category> Category { get; set; } = default!;
     }
 }

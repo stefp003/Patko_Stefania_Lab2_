@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Patko_Stefania_Lab2_.Data;
 using Patko_Stefania_Lab2_.Models;
 
-namespace Patko_Stefania_Lab2_.Pages.Books
+namespace Patko_Stefania_Lab2_.Pages.Categories
 {
     public class DetailsModel : PageModel
     {
@@ -19,7 +19,7 @@ namespace Patko_Stefania_Lab2_.Pages.Books
             _context = context;
         }
 
-        public Book Book { get; set; } = default!;
+        public Category Category { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -28,18 +28,15 @@ namespace Patko_Stefania_Lab2_.Pages.Books
                 return NotFound();
             }
 
-            Book = await _context.Book
-       .Include(b => b.Author)
-       .Include(b => b.Publisher)
-       .Include(b => b.BookCategories)
-           .ThenInclude(bc => bc.Category) 
-       .AsNoTracking()
-       .FirstOrDefaultAsync(m => m.ID == id);
-            if (Book == null)
+            var category = await _context.Category.FirstOrDefaultAsync(m => m.ID == id);
+            if (category == null)
             {
                 return NotFound();
             }
-            
+            else
+            {
+                Category = category;
+            }
             return Page();
         }
     }

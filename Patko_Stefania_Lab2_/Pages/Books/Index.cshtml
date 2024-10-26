@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "/"
 @model Patko_Stefania_Lab2_.Pages.Books.IndexModel
 
 @{
@@ -17,11 +17,9 @@
                 @Html.DisplayNameFor(model => model.Book[0].Title)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Book[0].Author.FirstName)
+                @Html.DisplayNameFor(model => model.Book[0].Author.FullName)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Book[0].Author.LastName)
-            </th>
+           
             <th>
                 @Html.DisplayNameFor(model => model.Book[0].Price)
             </th>
@@ -32,20 +30,26 @@
             <th>
                 @Html.DisplayNameFor(model => model.Book[0].Publisher.PublisherName)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Book[0].BookCategories)
+            </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Book) {
-        <tr>
+@foreach (var item in Model.BookD.Books) {
+            string selectedRow = "";
+            if (item.ID == Model.BookID)
+            {
+                selectedRow = "table-success";
+            }
+            <tr class="@selectedRow">
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
             </td>
             <td>
-                    @Html.DisplayFor(modelItem => item.Author.FirstName)
-            </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Author.LastName)
-                </td>
+                    @Html.DisplayFor(modelItem => item.Author.FullName)
+            </td> 
             <td>
                 @Html.DisplayFor(modelItem => item.Price)
             </td>
@@ -55,6 +59,14 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Publisher.PublisherName)
             </td>
+                <td>
+                    @{
+                        foreach (var category in item.BookCategories)
+                        {
+                            @category.Category.ID @: @category.Category.CategoryName <br />
+                        }
+                    }
+                </td>
             <td>
                 <a asp-page="./Edit" asp-route-id="@item.ID">Edit</a> |
                 <a asp-page="./Details" asp-route-id="@item.ID">Details</a> |
