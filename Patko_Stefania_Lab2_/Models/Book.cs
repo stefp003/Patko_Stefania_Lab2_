@@ -19,5 +19,6 @@ namespace Patko_Stefania_Lab2_.Models
 
         public int? PublisherID { get; set; }
         public Publisher? Publisher { get; set; }
+        public ICollection<BookCategory>? BookCategories { get; set; }
     }
 }

@@ -11,7 +11,7 @@ using Patko_Stefania_Lab2_.Models;
 
 namespace Patko_Stefania_Lab2_.Pages.Books
 {
-    public class EditModel : PageModel
+    public class EditModel : BookCatgoriesPageModel
     {
         private readonly Patko_Stefania_Lab2_.Data.Patko_Stefania_Lab2_Context _context;
 
@@ -30,12 +30,26 @@ namespace Patko_Stefania_Lab2_.Pages.Books
                 return NotFound();
             }
 
-            var book =  await _context.Book.FirstOrDefaultAsync(m => m.ID == id);
-            if (book == null)
+            Book = await _context.Book
+                .Include(b => b.Publisher)
+                .Include(b => b.Author)
+                .Include(b => b.BookCategories).ThenInclude(b => b.Category)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.ID == id);
+            if (Book == null)
             {
                 return NotFound();
             }
-            Book = book;
+            PopulateAssignedCategoryData(_context, Book);
+
+            Book = Book;
+            var authorList = _context.Author.Select(x => new
+            {
+                x.ID,
+                FullName = x.LastName + " " + x.FirstName
+            });
+
+           
             ViewData["PublisherID"] = new SelectList(_context.Set<Publisher>(), "ID",
             "PublisherName");
             ViewData["AuthorID"] = new SelectList(_context.Set<Author>(), "ID",
@@ -45,8 +59,40 @@ namespace Patko_Stefania_Lab2_.Pages.Books
 
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more information, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(int? id, string[]
+selectedCategories)
+
         {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            //se va include Author conform cu sarcina de la lab 2
+            var bookToUpdate = await _context.Book
+            .Include(i => i.Publisher)
+            .Include(i => i.Author)
+            .Include(i => i.BookCategories)
+            .ThenInclude(i => i.Category)
+            .FirstOrDefaultAsync(s => s.ID == id);
+            if (bookToUpdate == null)
+            {
+                return NotFound();
+            }
+            //se va modifica AuthorID conform cu sarcina de la lab 2
+            if (await TryUpdateModelAsync<Book>(
+            bookToUpdate,
+            "Book",
+            i => i.Title, i => i.Author,
+            i => i.Price, i => i.PublishingDate, i => i.PublisherID))
+            {
+                UpdateBookCategories(_context, selectedCategories, bookToUpdate);
+                await _context.SaveChangesAsync();
+                return RedirectToPage("./Index");
+            }
+            UpdateBookCategories(_context, selectedCategories, bookToUpdate);
+            PopulateAssignedCategoryData(_context, bookToUpdate);
+            return Page();
+
             if (!ModelState.IsValid)
             {
                 return Page();
