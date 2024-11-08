@@ -1,12 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Patko_Stefania_Lab2_.Data;
+using Microsoft.AspNetCore.Identity;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<Patko_Stefania_Lab2_Context>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Patko_Stefania_Lab2_Context") ?? throw new InvalidOperationException("Connection string 'Patko_Stefania_Lab2_Context' not found.")));
+
+builder.Services.AddDbContext<LibraryIdentityContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Patko_Stefania_Lab2_Context") ?? throw new InvalidOperationException("Connectionstring 'Patko_Stefania_Lab2_Context' not found.")));
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<LibraryIdentityContext>();
 
 var app = builder.Build();
 
