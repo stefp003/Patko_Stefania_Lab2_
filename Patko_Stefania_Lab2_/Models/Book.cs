@@ -7,11 +7,16 @@ namespace Patko_Stefania_Lab2_.Models
     public class Book
     {
         public int ID { get; set; }
+        [Required(ErrorMessage = "Titlul este obligatoriu.")]
         [Display(Name = "Book Title")]
+        [StringLength(150,MinimumLength =(3), ErrorMessage="Titlul trebuie sa aiba intre 3 si 150 de caractere")]
         public string Title { get; set; }
+        
+
         public int AuthorID { get; set; }
+        [DataType(DataType.Date)]
+
         public Author? Author { get; set; }
-        [Column(TypeName = "decimal(6,2)")]
         public decimal Price { get; set; }
 
         [DataType(DataType.Date)]
